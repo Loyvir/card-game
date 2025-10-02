@@ -1,12 +1,15 @@
 extends Node2D
 
+
 const COLLISION_MASK_CARD = 1
 const COLLISION_MASK_CARD_SLOT = 2
+const DEFAULT_CARD_MOVE_SPEED = 0.1
 
 var screen_size
 var card_being_dragged = null
 var current_hovered_card = null
 var original_z_index = 0
+var player_hand_reference
 
 # A counter to track how many card areas the mouse is currently inside.
 # This makes the logic for overlapping cards efficient.
@@ -15,11 +18,12 @@ var card_hover_count = 0
 
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
-	# Find all nodes in the "cards" group and connect to their signals
+	player_hand_reference = $"../PlayerHand"
+	$"../InputManager".connect("left_mouse_button_released", on_left_clicked_released)
+
 	var cards = get_tree().get_nodes_in_group("cards")
 	for card in cards:
-		card.hovered.connect(_on_card_hovered)
-		card.hovered_off.connect(_on_card_hovered_off)
+		register_card(card)
 
 
 func _process(delta: float) -> void:
@@ -53,26 +57,15 @@ func _process(delta: float) -> void:
 			current_hovered_card = null
 
 
-# --- NEW SIGNAL HANDLERS ---
-# These functions just update the counter.
+func on_left_click_released(): 
+	if card_being_dragged:
+		finish_drag()
+
 func _on_card_hovered(card):
 	card_hover_count += 1
 
 func _on_card_hovered_off(card):
 	card_hover_count -= 1
-
-
-# --- THE REST OF THE CODE IS THE SAME ---
-
-func _input(event):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		if event.is_pressed():
-			# This now correctly uses the hovered card identified in _process
-			if is_instance_valid(current_hovered_card):
-				start_drag(current_hovered_card)
-		else:
-			finish_drag()
-
 
 func start_drag(card):
 	card_being_dragged = card
@@ -89,12 +82,15 @@ func finish_drag():
 		
 		# Check if we dropped it on a valid, empty slot
 		if card_slot_found and not card_slot_found.card_in_slot:
+			player_hand_reference.remove_card_from_hand(card_being_dragged)
 			# Snap the card to the slot's position
 			card_being_dragged.position = card_slot_found.position
 			# Disable the card's collision so it can't be picked up again (optional)
 			card_being_dragged.get_node("Area2D/CollisionShape2D").disabled = true
 			# Mark the slot as occupied
 			card_slot_found.card_in_slot = true
+		else:
+			player_hand_reference.add_card_to_hand(card_being_dragged, DEFAULT_CARD_MOVE_SPEED)
 		
 		# IMPORTANT: Set card_being_dragged to null AFTER all logic is done.
 		card_being_dragged = null
@@ -113,20 +109,11 @@ func raycast_check_for_card_slot():
 	else:
 		return null
 
-func raycast_check_for_card():  
-	var space_state = get_world_2d().direct_space_state
-	var parameters = PhysicsPointQueryParameters2D.new()
-	parameters.position = get_global_mouse_position()
-	parameters.collide_with_areas = true
-	parameters.collision_mask = COLLISION_MASK_CARD
-	var results = space_state.intersect_point(parameters)
+func register_card(card):
+	card.hovered.connect(_on_card_hovered)
+	card.hovered_off.connect(_on_card_hovered_off)
 	
-	if results.size() > 0:
-		return get_card_with_highest_z_index(results)
-	else:
-		return null
-
-
+	
 func get_card_with_highest_z_index(results):
 	var highest_card = results[0].collider.get_parent()
 	var highest_z = highest_card.z_index
