@@ -55,7 +55,6 @@ func _process(delta: float) -> void:
 
 # --- NEW SIGNAL HANDLERS ---
 # These functions just update the counter.
-
 func _on_card_hovered(card):
 	card_hover_count += 1
 
@@ -83,14 +82,22 @@ func start_drag(card):
 
 
 func finish_drag():
+	# Only run ANY of this logic if a card is actually being dragged.
 	if is_instance_valid(card_being_dragged):
 		card_being_dragged.z_index = original_z_index
-	var card_slot_found = raycast_check_for_card_slot()
-	if card_slot_found and not card_slot_found.card_in_slot:
-		card_being_dragged.position = card_slot_found.position
-		card_being_dragged.get_node("Area2D/CollisionShape2D").disabled = true
-		card_slot_found.card_in_slot = true 
-	card_being_dragged = null  
+		var card_slot_found = raycast_check_for_card_slot()
+		
+		# Check if we dropped it on a valid, empty slot
+		if card_slot_found and not card_slot_found.card_in_slot:
+			# Snap the card to the slot's position
+			card_being_dragged.position = card_slot_found.position
+			# Disable the card's collision so it can't be picked up again (optional)
+			card_being_dragged.get_node("Area2D/CollisionShape2D").disabled = true
+			# Mark the slot as occupied
+			card_slot_found.card_in_slot = true
+		
+		# IMPORTANT: Set card_being_dragged to null AFTER all logic is done.
+		card_being_dragged = null
 
 
 func raycast_check_for_card_slot():  

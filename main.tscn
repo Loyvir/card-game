@@ -15,4 +15,10 @@ position = Vector2(529, 499)
 [node name="Card2" parent="CardManager" instance=ExtResource("2_a5230")]
 position = Vector2(478, 498)
 
+[node name="CardSlot2" parent="." instance=ExtResource("3_o4ate")]
+position = Vector2(364, 186)
+
 [node name="CardSlot" parent="." instance=ExtResource("3_o4ate")]
+light_mask = 2
+visibility_layer = 2
+position = Vector2(828, 206)
