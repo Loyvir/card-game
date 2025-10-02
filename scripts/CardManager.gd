@@ -19,7 +19,7 @@ var card_hover_count = 0
 func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	player_hand_reference = $"../PlayerHand"
-	$"../InputManager".connect("left_mouse_button_released", on_left_clicked_released)
+	$"../InputManager".connect("left_mouse_button_released", on_left_click_released)
 
 	var cards = get_tree().get_nodes_in_group("cards")
 	for card in cards:
@@ -96,16 +96,31 @@ func finish_drag():
 		card_being_dragged = null
 
 
-func raycast_check_for_card_slot():  
+
+func raycast_check_for_card_slot():
 	var space_state = get_world_2d().direct_space_state
 	var parameters = PhysicsPointQueryParameters2D.new()
 	parameters.position = get_global_mouse_position()
 	parameters.collide_with_areas = true
 	parameters.collision_mask = COLLISION_MASK_CARD_SLOT
 	var results = space_state.intersect_point(parameters)
-	
+
 	if results.size() > 0:
 		return results[0].collider.get_parent()
+	else:
+		return null
+		
+		
+func raycast_check_for_card():
+	var space_state = get_world_2d().direct_space_state
+	var parameters = PhysicsPointQueryParameters2D.new()
+	parameters.position = get_global_mouse_position()
+	parameters.collide_with_areas = true
+	parameters.collision_mask = COLLISION_MASK_CARD
+	var results = space_state.intersect_point(parameters)
+
+	if results.size() > 0:
+		return get_card_with_highest_z_index(results)
 	else:
 		return null
 

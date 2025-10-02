@@ -29,7 +29,7 @@ func raycast_at_cursor():
 	var parameters = PhysicsPointQueryParameters2D.new()
 	parameters.position = get_global_mouse_position()
 	parameters.collide_with_areas = true
-	parameters.collision_mask = COLLISION_MASK_CARD
+	parameters.collision_mask = COLLISION_MASK_CARD | COLLISION_MASK_DECK
 	var results = space_state.intersect_point(parameters)
 	
 	if results.size() > 0:
