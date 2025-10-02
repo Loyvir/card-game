@@ -1,0 +1,17 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+!.godot/user_settings.tres
+!.godot/user_settings.gd
+!.godot/project_settings_override.cfg
+
+# Godot-specific ignores
+addons/
+export_presets.cfg
+*.import
+
+# Mono-specific ignores for C#
+.mono/
+bin/
+obj/
