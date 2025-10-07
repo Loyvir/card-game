@@ -74,14 +74,13 @@ func _on_card_hovered_off(card):
 func start_drag(card):
 	card_being_dragged = card
 	original_z_index = card.z_index
-	card.z_index = 100
 	highlight_card(card, false)
+	card.z_index = 100
 
 
 func finish_drag():
 	# Only run ANY of this logic if a card is actually being dragged.
 	if is_instance_valid(card_being_dragged):
-		card_being_dragged.z_index = -1
 		var card_slot_found = raycast_check_for_card_slot()
 		
 		# Check if we dropped it on a valid, empty slot
@@ -97,12 +96,13 @@ func finish_drag():
 			card_being_dragged.get_node("Area2D/CollisionShape2D").disabled = true
 			# Mark the slot as occupied
 			card_slot_found.card_in_slot = true
+			card_being_dragged.z_index = 0
 		else:
+			card_being_dragged.z_index = original_z_index
 			player_hand_reference.add_card_to_hand(card_being_dragged, DEFAULT_CARD_MOVE_SPEED)
 		
 		# IMPORTANT: Set card_being_dragged to null AFTER all logic is done.
 		card_being_dragged = null
-
 
 
 func raycast_check_for_card_slot():
@@ -151,6 +151,9 @@ func get_card_with_highest_z_index(results):
 
 
 func highlight_card(card, hovered):
+	if card.card_in_slot:
+		return
+
 	if hovered:
 		card.scale = Vector2(CARD_HOVER_SCALE, CARD_HOVER_SCALE)
 		card.z_index = 2
