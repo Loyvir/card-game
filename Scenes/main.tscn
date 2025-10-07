@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://bgtjwn04hphvk"]
 
-[ext_resource type="Script" path="res://scripts/CardManager.gd" id="1_pkg1s"]
+[ext_resource type="Script" path="res://Scripts/CardManager.gd" id="1_pkg1s"]
 [ext_resource type="PackedScene" uid="uid://cuexe0bjbwrwi" path="res://Scenes/CardSlot.tscn" id="2_c2jjc"]
-[ext_resource type="Script" path="res://scripts/PlayerHand.gd" id="3_xvbk5"]
+[ext_resource type="Script" path="res://Scripts/PlayerHand.gd" id="3_xvbk5"]
 [ext_resource type="Script" path="res://Scenes/Deck.gd" id="4_mh3p0"]
 [ext_resource type="Texture2D" uid="uid://b3bfglgrkw3ym" path="res://assets/images/ui/Deck.png" id="4_nepdr"]
 [ext_resource type="Script" path="res://Scenes/ImputManager.gd" id="6_p2dm8"]
@@ -15,19 +15,40 @@ size = Vector2(261, 413)
 [node name="CardManager" type="Node2D" parent="."]
 script = ExtResource("1_pkg1s")
 
-[node name="CardSlot2" parent="." instance=ExtResource("2_c2jjc")]
-position = Vector2(364, 186)
+[node name="CardSlot1" parent="." instance=ExtResource("2_c2jjc")]
+position = Vector2(960, 750)
+scale = Vector2(0.65, 0.65)
 
-[node name="CardSlot" parent="." instance=ExtResource("2_c2jjc")]
+[node name="CardSlot2" parent="." instance=ExtResource("2_c2jjc")]
 light_mask = 2
 visibility_layer = 2
-position = Vector2(828, 206)
+position = Vector2(760, 750)
+scale = Vector2(0.65, 0.65)
+
+[node name="CardSlot3" parent="." instance=ExtResource("2_c2jjc")]
+light_mask = 2
+visibility_layer = 2
+position = Vector2(560, 750)
+scale = Vector2(0.65, 0.65)
+
+[node name="CardSlot4" parent="." instance=ExtResource("2_c2jjc")]
+light_mask = 2
+visibility_layer = 2
+position = Vector2(1160, 750)
+scale = Vector2(0.65, 0.65)
+
+[node name="CardSlot5" parent="." instance=ExtResource("2_c2jjc")]
+light_mask = 2
+visibility_layer = 2
+position = Vector2(1360, 750)
+scale = Vector2(0.65, 0.65)
 
 [node name="PlayerHand" type="Node2D" parent="."]
 script = ExtResource("3_xvbk5")
 
 [node name="Deck" type="Node2D" parent="."]
 position = Vector2(150, 850)
+scale = Vector2(0.5, 0.5)
 script = ExtResource("4_mh3p0")
 
 [node name="Sprite2D" type="Sprite2D" parent="Deck"]
@@ -57,3 +78,32 @@ text = "0"
 
 [node name="InputManager" type="Node2D" parent="."]
 script = ExtResource("6_p2dm8")
+
+[node name="EndTurnButton" type="Button" parent="."]
+offset_left = 1800.0
+offset_top = 900.0
+offset_right = 1878.0
+offset_bottom = 931.0
+text = "End Turn"
+
+[node name="OpponentDeck" type="Node2D" parent="."]
+
+[node name="Deck" type="Node2D" parent="OpponentDeck"]
+position = Vector2(1800, 200)
+scale = Vector2(0.5, 0.5)
+
+[node name="Sprite2D" type="Sprite2D" parent="OpponentDeck"]
+z_index = -2
+position = Vector2(1803, 199.5)
+scale = Vector2(0.304597, 0.357038)
+texture = ExtResource("4_nepdr")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="OpponentDeck"]
+modulate = Color(0, 0, 0, 1)
+z_index = -2
+offset_left = 1791.5
+offset_top = 190.5
+offset_right = 1831.5
+offset_bottom = 230.5
+scale = Vector2(2, 2)
+text = "0"

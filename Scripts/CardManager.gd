@@ -4,12 +4,16 @@ extends Node2D
 const COLLISION_MASK_CARD = 1
 const COLLISION_MASK_CARD_SLOT = 2
 const DEFAULT_CARD_MOVE_SPEED = 0.1
+const DEFAULT_CARD_SCALE = 0.5
+const CARD_HOVER_SCALE = 0.55
+const CARD_SMALLER_SCALE = 0.4
 
 var screen_size
 var card_being_dragged = null
 var current_hovered_card = null
 var original_z_index = 0
 var player_hand_reference
+var played_card_this_turn = false
 
 # A counter to track how many card areas the mouse is currently inside.
 # This makes the logic for overlapping cards efficient.
@@ -71,13 +75,13 @@ func start_drag(card):
 	card_being_dragged = card
 	original_z_index = card.z_index
 	card.z_index = 100
-	highlight_card(card, false) # Un-highlight when dragging starts
+	highlight_card(card, false)
 
 
 func finish_drag():
 	# Only run ANY of this logic if a card is actually being dragged.
 	if is_instance_valid(card_being_dragged):
-		card_being_dragged.z_index = original_z_index
+		card_being_dragged.z_index = -1
 		var card_slot_found = raycast_check_for_card_slot()
 		
 		# Check if we dropped it on a valid, empty slot
@@ -85,6 +89,10 @@ func finish_drag():
 			player_hand_reference.remove_card_from_hand(card_being_dragged)
 			# Snap the card to the slot's position
 			card_being_dragged.position = card_slot_found.position
+			
+			card_being_dragged.scale = Vector2(CARD_SMALLER_SCALE, CARD_SMALLER_SCALE)
+			card_being_dragged.card_in_slot = card_slot_found 
+			
 			# Disable the card's collision so it can't be picked up again (optional)
 			card_being_dragged.get_node("Area2D/CollisionShape2D").disabled = true
 			# Mark the slot as occupied
@@ -139,13 +147,13 @@ func get_card_with_highest_z_index(results):
 			highest_card = current_card
 			highest_z = current_card.z_index
 			
-	return highest_card
+	return highest_card 
 
 
 func highlight_card(card, hovered):
 	if hovered:
-		card.scale = Vector2(1.05, 1.05)
-		card.z_index = 2 # Assumes default is 1
+		card.scale = Vector2(CARD_HOVER_SCALE, CARD_HOVER_SCALE)
+		card.z_index = 2
 	else:
-		card.scale = Vector2(1, 1)
+		card.scale = Vector2(DEFAULT_CARD_SCALE, DEFAULT_CARD_SCALE)
 		card.z_index = 1

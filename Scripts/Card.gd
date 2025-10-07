@@ -5,6 +5,8 @@ signal hovered(card)
 signal hovered_off(card)
 
 var card_hand_position
+var card_in_slot
+var card_type
 
 func _ready() -> void:
 	# Add this node to the "cards" group so the main scene can identify it
