@@ -133,6 +133,7 @@ func raycast_check_for_card():
 		return null
 
 func register_card(card):
+	card.scale = Vector2(DEFAULT_CARD_SCALE, DEFAULT_CARD_SCALE)
 	card.hovered.connect(_on_card_hovered)
 	card.hovered_off.connect(_on_card_hovered_off)
 	
